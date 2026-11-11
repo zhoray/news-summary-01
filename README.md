@@ -1,16 +1,16 @@
-# The Day in Full — news-summary-01 entry
+# News summary entry
 
-A make.fun "Write the best summary of 11 November's world news" entry.
+This entry copies the day's news summary to entry.txt in the configured output directory.
 
-`main.ts` (Node 22, standard library only) copies `summary.txt` — a summary
-of the world's news of Wednesday 11 November 2026, researched from the day's
-reporting by Reuters, AFP, the BBC, CBS and the New York Times and written
-for this entry — to `/output/entry.txt`, byte for byte, on every run.
+- summary.txt contains the summary.
+- main.ts reads it beside the module and writes its exact bytes.
 
-Run it locally:
+Run with Node 22:
 
-```sh
-mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
-```
+MAKEFUN_OUTPUT_DIR=/tmp/news-output node main.ts
 
-License: MIT (see `LICENSE`).
+If MAKEFUN_OUTPUT_DIR is unset, output goes to /output. The entry uses only Node's standard library and has no build step.
+
+## License
+
+MIT. See LICENSE.

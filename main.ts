@@ -1,18 +1,22 @@
-// news-summary-01 entry (Node 22, standard library only).
-//
-// The summary of 11 November 2026's world news lives in summary.txt beside
-// this file, researched and written for this entry. The program's whole job
-// is to place those exact bytes at /output/entry.txt, where the grader
-// reads them. It runs with no network and no input, so every run writes the
-// same bytes.
-//
-// Locally, MAKEFUN_OUTPUT_DIR stands in for /output:
-//   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
+import { readFile, mkdir, writeFile } from "node:fs/promises";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+function validateSummary(bytes: Uint8Array): void {
+  const text = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+  const codePoints = [...text].length;
 
-const summary = readFileSync(new URL('./summary.txt', import.meta.url), 'utf8');
-const outDir = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
-mkdirSync(outDir, { recursive: true });
-writeFileSync(join(outDir, 'entry.txt'), summary, 'utf8');
+  if (codePoints < 1 || codePoints > 2000 || text.trim().length === 0) {
+    throw new Error(
+      `summary.txt must contain 1–2,000 Unicode code points and non-whitespace text (found ${codePoints})`,
+    );
+  }
+}
+
+const here = dirname(fileURLToPath(import.meta.url));
+const outputDir = process.env.MAKEFUN_OUTPUT_DIR || "/output";
+const summary = await readFile(join(here, "summary.txt"));
+
+validateSummary(summary);
+await mkdir(outputDir, { recursive: true });
+await writeFile(join(outputDir, "entry.txt"), summary);
